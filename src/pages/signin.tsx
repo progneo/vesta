@@ -4,14 +4,11 @@ import {
   FormControl,
   FormLabel,
   Input,
-  Checkbox,
   Stack,
   Button,
   Heading,
-  Text,
   VStack
 } from '@chakra-ui/react'
-import NextLink from 'next/link'
 import { z } from 'zod'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { SubmitHandler, useForm } from 'react-hook-form'
@@ -53,7 +50,7 @@ function SignInCard() {
     if (signInData?.error) {
       console.log(signInData.error)
     } else {
-      router.push('/')
+      router.push('/clients')
     }
   }
 

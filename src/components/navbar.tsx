@@ -11,27 +11,12 @@ import {
   useDisclosure,
   BoxProps,
   FlexProps,
-  Input,
-  InputGroup,
-  InputRightElement,
-  Divider,
-  Spacer
+  useToken
 } from '@chakra-ui/react'
-import {
-  FiHome,
-  FiDollarSign,
-  FiInfo,
-  FiMenu,
-  FiLogIn,
-  FiLogOut,
-  FiUser,
-  FiUsers,
-  FiCalendar
-} from 'react-icons/fi'
+import { FiMenu, FiLogIn, FiLogOut, FiUsers, FiCalendar } from 'react-icons/fi'
 import { IconType } from 'react-icons'
 import React from 'react'
 import NextLink from 'next/link'
-import { SearchIcon } from '@chakra-ui/icons'
 import { useSession } from 'next-auth/react'
 
 interface LinkItemProps {
@@ -138,6 +123,8 @@ const LoginButton = () => {
 
 const UserPanel = () => {
   const { data: session, status } = useSession()
+
+  console.log(session)
 
   if (status === 'authenticated') {
     return (

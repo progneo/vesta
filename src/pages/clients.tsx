@@ -123,7 +123,7 @@ function ClientsTable({ isLoading, clients }: ClientsTableProps) {
       <Text as={'i'} my={3}>
         Найдено записей: {clients.length}
       </Text>
-      {clients.map((client: Client, i) => {
+      {clients.map((client: Client, _) => {
         return ClientRow(client)
       })}
     </Box>

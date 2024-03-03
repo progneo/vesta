@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { Client, Father, Mother, Note } from '@prisma/client'
 import { useRouter } from 'next/router'
-import { getClientById } from '@/lib/clients'
+import { deleteClientById, getClientById } from '@/lib/clients'
 import {
   Box,
   Button,
@@ -154,6 +154,11 @@ function ClientPage() {
     }
   }, [id])
 
+  async function deleteClient() {
+    await deleteClientById(Number(id))
+    await router.push('/clients')
+  }
+
   if (isLoading) {
     return (
       <Flex justify={'center'}>
@@ -193,6 +198,9 @@ function ClientPage() {
           <NotesCard notes={data.Note} />
         </GridItem>
       </Grid>
+      <Button colorScheme={'red'} onClick={deleteClient} mt={4}>
+        Удалить клиента
+      </Button>
     </Box>
   )
 }

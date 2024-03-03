@@ -1,7 +1,6 @@
 import CredentialsProvider from 'next-auth/providers/credentials'
 import { PrismaAdapter } from '@next-auth/prisma-adapter'
 import { db } from '@/lib/db'
-import { compare } from 'bcrypt'
 import { NextAuthOptions } from 'next-auth'
 
 export const authOptions: NextAuthOptions = {
@@ -32,10 +31,15 @@ export const authOptions: NextAuthOptions = {
           return null
         }
 
-        const passwordMatch = await compare(
-          credentials.password,
-          existingUser.password
-        )
+        // const passwordMatch = await compare(
+        //   credentials.password,
+        //   existingUser.password
+        // )
+        const passwordMatch = credentials.password === existingUser.password
+
+        if (!passwordMatch) {
+          return null
+        }
 
         if (!passwordMatch) {
           return null
@@ -53,9 +57,11 @@ export const authOptions: NextAuthOptions = {
   callbacks: {
     async jwt({ token, user }) {
       if (user) {
+        token.role = user.roleId
+        token.firstName = user.firstName
+        token.lastName = user.lastName
         return {
-          ...token,
-          name: user.name
+          ...token
         }
       }
       return token
@@ -65,7 +71,9 @@ export const authOptions: NextAuthOptions = {
         ...session,
         user: {
           ...session.user,
-          name: token.name
+          roleId: token.role,
+          firstName: token.firstName,
+          lastName: token.lastName
         }
       }
     }

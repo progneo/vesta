@@ -28,4 +28,14 @@ const getClientById = async (id: Number) => {
   return response.json()
 }
 
-export { getClients, getClientsWithParams, getClientById }
+const deleteClientById = async (id: Number) => {
+  const response = await fetch(`/api/clients/${id}`, {
+    method: 'DELETE'
+  })
+  if (!response.ok) {
+    throw new Error('Error fetching clients')
+  }
+  return response.json()
+}
+
+export { getClients, getClientsWithParams, getClientById, deleteClientById }
