@@ -1,0 +1,99 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Client {
+  id               Int           @id @default(autoincrement())
+  firstName        String
+  lastName         String
+  patronymic       String
+  gender           String
+  birthDate        DateTime
+  address          String
+  identityDocument String
+  mother           Mother?       @relation(fields: [motherId], references: [id])
+  father           Father?       @relation(fields: [fatherId], references: [id])
+  motherId         Int?          @unique
+  fatherId         Int?          @unique
+  Note             Note[]
+  Test             Test[]
+  Appointment      Appointment[]
+}
+
+model Mother {
+  id               Int      @id @default(autoincrement())
+  firstName        String
+  lastName         String
+  patronymic       String
+  phone            String
+  identityDocument String
+  Client           Client[]
+}
+
+model Father {
+  id               Int      @id @default(autoincrement())
+  firstName        String
+  lastName         String
+  patronymic       String
+  phone            String
+  identityDocument String
+  Client           Client[]
+}
+
+model Note {
+  id       Int    @id @default(autoincrement())
+  text     String
+  client   Client @relation(fields: [clientId], references: [id])
+  clientId Int
+}
+
+model Test {
+  id          Int      @id @default(autoincrement())
+  testingDate DateTime
+  client      Client   @relation(fields: [clientId], references: [id])
+  clientId    Int
+}
+
+model Appointment {
+  id         Int      @id @default(autoincrement())
+  dateTime   DateTime
+  client     Client   @relation(fields: [clientId], references: [id])
+  specialist Employee @relation(fields: [employeeId], references: [id])
+  clientId   Int
+  employeeId Int
+}
+
+model Employee {
+  id          Int           @id @default(autoincrement())
+  firstName   String
+  lastName    String
+  patronymic  String
+  gender      String
+  birhtDate   DateTime
+  phone       String
+  adress      String
+  Appointment Appointment[]
+  User        User[]
+}
+
+model Role {
+  id   Int    @id @default(autoincrement())
+  name String
+  User User[]
+}
+
+model User {
+  id         Int      @id @default(autoincrement())
+  username   String   @unique
+  password   String
+  isActive   Boolean
+  employee   Employee @relation(fields: [employeeId], references: [id])
+  role       Role     @relation(fields: [roleId], references: [id])
+  employeeId Int
+  roleId     Int
+}
