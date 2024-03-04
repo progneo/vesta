@@ -10,14 +10,13 @@ import {
   DrawerContent,
   useDisclosure,
   BoxProps,
-  FlexProps,
-  useToken
+  FlexProps
 } from '@chakra-ui/react'
 import { FiMenu, FiLogIn, FiLogOut, FiUsers, FiCalendar } from 'react-icons/fi'
 import { IconType } from 'react-icons'
 import React from 'react'
 import NextLink from 'next/link'
-import { useSession } from 'next-auth/react'
+import { useAppSelector } from '@/store/store'
 
 interface LinkItemProps {
   name: string
@@ -122,39 +121,31 @@ const LoginButton = () => {
 }
 
 const UserPanel = () => {
-  const { data: session, status } = useSession()
+  const authState = useAppSelector(state => state.auth)
 
-  console.log(session)
-
-  if (status === 'authenticated') {
-    return (
-      <Flex w="100%" alignItems="center" justifyContent="space-between" px={3}>
-        <Text fontSize="lg" color={'#7C543B'}>
-          {session?.user.firstName} {session?.user.lastName}
-        </Text>
+  return (
+    <Flex w="100%" alignItems="center" justifyContent="space-between" px={3}>
+      <Text fontSize="lg" color={'#7C543B'}>
+        {authState.firstName} {authState.lastName}
+      </Text>
+      {!authState.isAuthorized && (
         <NextLink href={'/signin'}>
+          <HStack>
+            <FiLogOut />
+            <Text fontSize="lg">Вход</Text>
+          </HStack>
+        </NextLink>
+      )}
+      {authState.isAuthorized && (
+        <NextLink href={'/logout'}>
           <HStack>
             <FiLogOut />
             <Text fontSize="lg">Выход</Text>
           </HStack>
         </NextLink>
-      </Flex>
-    )
-  } else {
-    return (
-      <Flex w="100%" alignItems="center" justifyContent="space-between" px={3}>
-        <Text fontSize="lg" color={'#7C543B'}>
-          Имя Фамилия
-        </Text>
-        <NextLink href={'/signin'}>
-          <HStack>
-            <FiLogOut />
-            <Text fontSize="lg">Выход</Text>
-          </HStack>
-        </NextLink>
-      </Flex>
-    )
-  }
+      )}
+    </Flex>
+  )
 }
 
 const MobileNav = ({ onOpen, ...rest }: MobileProps) => {

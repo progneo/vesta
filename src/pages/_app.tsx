@@ -1,22 +1,25 @@
 import React from 'react'
-import { SessionProvider } from 'next-auth/react'
 import { ChakraProvider } from '@chakra-ui/react'
 import theme from '@/lib/theme'
-import Layout from '@/pages/layout'
+import ReduxProvider from '@/store/redux-provider'
+import LoginController from '@/components/loginController'
 
 if (typeof window !== 'undefined') {
   window.history.scrollRestoration = 'manual'
 }
 
-function Website({ Component, router, pageProps: { session, ...pageProps } }) {
+// @ts-ignore
+function Website({ Component, router, pageProps: { ...pageProps } }) {
   return (
-    <SessionProvider session={pageProps.session}>
-      <ChakraProvider theme={theme}>
-        <Layout router={router}>
-          <Component {...pageProps} key={router.route} />
-        </Layout>
-      </ChakraProvider>
-    </SessionProvider>
+    <ChakraProvider theme={theme}>
+      <ReduxProvider>
+        <LoginController
+          Component={Component}
+          router={router}
+          pageProps={pageProps}
+        />
+      </ReduxProvider>
+    </ChakraProvider>
   )
 }
 

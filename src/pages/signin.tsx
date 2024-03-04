@@ -13,19 +13,23 @@ import { z } from 'zod'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { SubmitHandler, useForm } from 'react-hook-form'
 import { useEffect } from 'react'
-import { signIn } from 'next-auth/react'
 import { useRouter } from 'next/router'
+import { login } from '@/lib/auth'
+import { redirect } from 'next/navigation'
+import { useAppDispatch } from '@/store/store'
+import { setAuthState } from '@/store/authSlice'
 
 const FormSchema = z.object({
   username: z.string().min(1, 'Username is required'),
   password: z
     .string()
     .min(1, 'Password is required')
-    .min(8, 'Password must have than 8 characters')
+    .min(4, 'Password must have than 8 characters')
 })
 
 function SignInCard() {
   const router = useRouter()
+  const dispatch = useAppDispatch()
   const {
     register,
     handleSubmit,
@@ -41,17 +45,14 @@ function SignInCard() {
   type FormSchema = z.infer<typeof FormSchema>
 
   const onSubmit: SubmitHandler<FormSchema> = async data => {
-    const signInData = await signIn('credentials', {
-      username: data.username,
-      password: data.password,
-      redirect: false
+    const username = data.username
+    const password = data.password
+    await login({ username, password }).then(status => {
+      if (status === 200) {
+        dispatch(setAuthState(true))
+        router.push('/clients')
+      }
     })
-
-    if (signInData?.error) {
-      console.log(signInData.error)
-    } else {
-      router.push('/clients')
-    }
   }
 
   useEffect(() => {
