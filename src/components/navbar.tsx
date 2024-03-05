@@ -1,18 +1,18 @@
 import {
-  IconButton,
   Box,
+  BoxProps,
   CloseButton,
-  Flex,
-  HStack,
-  Icon,
-  Text,
   Drawer,
   DrawerContent,
-  useDisclosure,
-  BoxProps,
-  FlexProps
+  Flex,
+  FlexProps,
+  HStack,
+  Icon,
+  IconButton,
+  Text,
+  useDisclosure
 } from '@chakra-ui/react'
-import { FiMenu, FiLogIn, FiLogOut, FiUsers, FiCalendar } from 'react-icons/fi'
+import { FiCalendar, FiLogOut, FiMenu, FiUsers } from 'react-icons/fi'
 import { IconType } from 'react-icons'
 import React from 'react'
 import NextLink from 'next/link'
@@ -105,17 +105,6 @@ const NavItem = ({ icon, href, children, path, ...rest }: NavItemProps) => {
           {children}
         </Flex>
       </Box>
-    </NextLink>
-  )
-}
-
-const LoginButton = () => {
-  return (
-    <NextLink href={'/signin'}>
-      <HStack>
-        <FiLogIn />
-        <Text fontSize="sm">Login</Text>
-      </HStack>
     </NextLink>
   )
 }

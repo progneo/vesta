@@ -1,6 +1,5 @@
-import Mother from '@/types/Mother'
-import Father from '@/types/Father'
 import Note from '@/types/Note'
+import AdultOfClient from '@/types/AdultOfClient'
 
 export default interface Client {
   id: number
@@ -11,9 +10,6 @@ export default interface Client {
   birthDate: Date
   address: string
   identityDocument: string
-  motherId: number
-  fatherId: number
-  mother: Mother
-  father: Father
+  adultsOfClient: AdultOfClient[]
   notes: Note[]
 }

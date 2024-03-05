@@ -49,12 +49,14 @@ function ClientsOverlay() {
   const [firstName, setFirstName] = useState<string>('')
   const [lastName, setLastName] = useState<string>('')
   const [patronymic, setPatronymic] = useState<string>('')
+  const [birthDate, setBirthDate] = useState<string>('')
 
   const handleSearch = useDebouncedCallback(() => {
     const params = new URLSearchParams(searchParams)
     params.set('firstName', firstName)
     params.set('lastName', lastName)
     params.set('patronymic', patronymic)
+    params.set('birthDate', birthDate)
 
     setLoading(true)
     getClientsWithParams(params).then(data => {
@@ -100,7 +102,15 @@ function ClientsOverlay() {
             handleSearch()
           }}
         />
-        <Input bg={'#f5f5f5'} placeholder={'Дата рождения'} type="date" />
+        <Input
+          bg={'#f5f5f5'}
+          placeholder={'Дата рождения'}
+          type="date"
+          onChange={e => {
+            setBirthDate(e.target.value)
+            handleSearch()
+          }}
+        />
       </Flex>
       <ClientsTable isLoading={isLoading} clients={data} />
     </Box>

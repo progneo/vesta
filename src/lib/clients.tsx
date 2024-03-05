@@ -1,7 +1,26 @@
-interface ClientsRequest {
-  firstName: String | null
-  lastName: String | null
-  patronymic: String | null
+import CreateClientRequest from '@/types/CreateClientRequest'
+
+const createClient = async (client: CreateClientRequest) => {
+  const response = await fetch(`/api/clients`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({
+      firstName: client.firstName,
+      lastName: client.lastName,
+      patronymic: client.patronymic,
+      gender: client.gender,
+      birthDate: client.birthDate,
+      address: client.address,
+      identityDocument: client.identityDocument
+    })
+  })
+
+  if (!response.ok) {
+    throw new Error('Error creating client')
+  }
+  return response.json()
 }
 
 const getClientsWithParams = async (params: URLSearchParams) => {
@@ -38,4 +57,10 @@ const deleteClientById = async (id: Number) => {
   return response.json()
 }
 
-export { getClients, getClientsWithParams, getClientById, deleteClientById }
+export {
+  createClient,
+  getClients,
+  getClientsWithParams,
+  getClientById,
+  deleteClientById
+}

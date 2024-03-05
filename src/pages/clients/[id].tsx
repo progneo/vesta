@@ -6,31 +6,21 @@ import {
   Button,
   CircularProgress,
   Flex,
-  Grid,
   HStack,
-  Text,
-  VStack,
-  GridItem,
+  ListItem,
   OrderedList,
-  ListItem
+  Text,
+  VStack
 } from '@chakra-ui/react'
 import { FiArrowLeft } from 'react-icons/fi'
 import NextLink from 'next/link'
-import Mother from '@/types/Mother'
-import Father from '@/types/Father'
+import Adult from '@/types/Adult'
 import Client from '@/types/Client'
 import Note from '@/types/Note'
+import AdultOfClient from '@/types/AdultOfClient'
 
 interface ClientCardProps {
   client: Client
-}
-
-interface MotherCardProps {
-  mother: Mother
-}
-
-interface FatherCardProps {
-  father: Father
 }
 
 interface NotesCardProps {
@@ -39,22 +29,34 @@ interface NotesCardProps {
 
 function ClientCard({ client }: ClientCardProps) {
   return (
-    <Box border={'2px'} borderColor={'#f0ead2'} p={4} rounded="md">
-      <VStack alignItems={'start'} gap={4}>
+    <Box
+      p={4}
+      border={'2px'}
+      borderColor={'#f0ead2'}
+      rounded="md"
+      minWidth={'100%'}
+    >
+      <VStack alignItems={'start'} gap={2}>
         <Box>
-          <Text fontSize={'xl'}>{client.lastName}</Text>
-          <Text fontSize={'xl'}>{client.firstName}</Text>
-          <Text fontSize={'xl'}>{client.patronymic}</Text>
+          <Text fontSize={'2xl'}>{client.lastName}</Text>
+          <Text fontSize={'2xl'}>{client.firstName}</Text>
+          <Text fontSize={'2xl'}>{client.patronymic}</Text>
         </Box>
         <Text>Пол: {client.gender}</Text>
-        <Text>
-          {new Date(client.birthDate).toLocaleDateString('ru-RU', {
-            year: 'numeric',
-            month: 'numeric',
-            day: 'numeric'
-          })}
-        </Text>
-        <Text>{client.address}</Text>
+        <Box>
+          <Text>Дата рождения:</Text>
+          <Text>
+            {new Date(client.birthDate).toLocaleDateString('ru-RU', {
+              year: 'numeric',
+              month: 'numeric',
+              day: 'numeric'
+            })}
+          </Text>
+        </Box>
+        <Box>
+          <Text>Адрес:</Text>
+          <Text>{client.address}</Text>
+        </Box>
         <Box>
           <Text>Документ:</Text>
           <Text>{client.identityDocument}</Text>
@@ -66,7 +68,13 @@ function ClientCard({ client }: ClientCardProps) {
 
 function ScheduleCard() {
   return (
-    <Box border={'2px'} borderColor={'#f0ead2'} p={4} rounded="md" h={'100%'}>
+    <Box
+      p={4}
+      border={'2px'}
+      borderColor={'#f0ead2'}
+      rounded="md"
+      minWidth={'100%'}
+    >
       <Text fontSize={'xl'} mb={3}>
         Расписание
       </Text>
@@ -76,7 +84,13 @@ function ScheduleCard() {
 
 function TestingCard() {
   return (
-    <Box border={'2px'} borderColor={'#f0ead2'} p={4} rounded="md" h={'100%'}>
+    <Box
+      p={4}
+      border={'2px'}
+      borderColor={'#f0ead2'}
+      rounded="md"
+      minWidth={'100%'}
+    >
       <Text fontSize={'xl'} mb={3}>
         Результаты тестирования
       </Text>
@@ -86,7 +100,13 @@ function TestingCard() {
 
 function NotesCard({ notes }: NotesCardProps) {
   return (
-    <Box border={'2px'} borderColor={'#f0ead2'} p={4} rounded="md" h={'100%'}>
+    <Box
+      p={4}
+      border={'2px'}
+      borderColor={'#f0ead2'}
+      rounded="md"
+      minWidth={'100%'}
+    >
       <Text fontSize={'xl'} mb={3}>
         Примечания
       </Text>
@@ -102,38 +122,31 @@ function NotesCard({ notes }: NotesCardProps) {
   )
 }
 
-function FatherCard({ father }: FatherCardProps) {
+function AdultCard({ adult }: { adult: Adult }) {
   return (
-    <Box border={'2px'} borderColor={'#f0ead2'} p={4} rounded="md">
-      <VStack alignItems={'start'} gap={4}>
+    <Box
+      p={4}
+      border={'2px'}
+      borderColor={'#f0ead2'}
+      rounded={'md'}
+      minWidth={'100%'}
+    >
+      <VStack alignItems={'start'} gap={2}>
+        <Text as={'i'} fontSize={'lg'}>
+          {adult.type}
+        </Text>
         <Box>
-          <Text fontSize={'lg'}>{father.lastName}</Text>
-          <Text fontSize={'lg'}>{father.firstName}</Text>
-          <Text fontSize={'lg'}>{father.patronymic}</Text>
+          <Text fontSize={'xl'}>{adult.lastName}</Text>
+          <Text fontSize={'xl'}>{adult.firstName}</Text>
+          <Text fontSize={'xl'}>{adult.patronymic}</Text>
         </Box>
-        <Text>{father.phone}</Text>
+        <Box>
+          <Text>Номер телефона:</Text>
+          <Text>{adult.phone}</Text>
+        </Box>
         <Box>
           <Text>Паспорт:</Text>
-          <Text>{father.identityDocument}</Text>
-        </Box>
-      </VStack>
-    </Box>
-  )
-}
-
-function MotherCard({ mother }: MotherCardProps) {
-  return (
-    <Box border={'2px'} borderColor={'#f0ead2'} p={4} rounded="md">
-      <VStack alignItems={'start'} gap={4}>
-        <Box>
-          <Text fontSize={'lg'}>{mother.lastName}</Text>
-          <Text fontSize={'lg'}>{mother.firstName}</Text>
-          <Text fontSize={'lg'}>{mother.patronymic}</Text>
-        </Box>
-        <Text>{mother.phone}</Text>
-        <Box>
-          <Text>Паспорт:</Text>
-          <Text>{mother.identityDocument}</Text>
+          <Text>{adult.identityDocument}</Text>
         </Box>
       </VStack>
     </Box>
@@ -181,26 +194,23 @@ function ClientPage() {
         </NextLink>
         <Button colorScheme={'teal'}>Пройти тестирование</Button>
       </Flex>
-      <Grid mt={4} templateColumns="repeat(3, 1fr)" gap={4}>
-        <GridItem rowSpan={2}>
+      <HStack mt={4} gap={4} minWidth={'100%'}>
+        <VStack minWidth={'30%'}>
           <ClientCard client={data} />
-        </GridItem>
-        <GridItem rowSpan={2} colSpan={2}>
+          {data.adultsOfClient.map(
+            (adultOfClient: AdultOfClient, key: number) => {
+              if (adultOfClient.adult !== undefined) {
+                return <AdultCard adult={adultOfClient.adult} key={key} />
+              }
+            }
+          )}
+        </VStack>
+        <VStack alignSelf={'start'}>
           <ScheduleCard />
-        </GridItem>
-        <GridItem>
-          <MotherCard mother={data.mother} />
-        </GridItem>
-        <GridItem colSpan={2}>
           <TestingCard />
-        </GridItem>
-        <GridItem>
-          <FatherCard father={data.father} />
-        </GridItem>
-        <GridItem colSpan={2}>
           <NotesCard notes={data.notes} />
-        </GridItem>
-      </Grid>
+        </VStack>
+      </HStack>
       <Button colorScheme={'red'} onClick={deleteClient} mt={4}>
         Удалить клиента
       </Button>
