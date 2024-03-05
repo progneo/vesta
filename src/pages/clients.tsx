@@ -8,14 +8,12 @@ import {
   Input,
   Text
 } from '@chakra-ui/react'
-import { Client } from '@prisma/client'
 import { useEffect, useState } from 'react'
 import { getClients, getClientsWithParams } from '@/lib/clients'
 import NextLink from 'next/link'
-import { ClientRequest } from 'node:http'
 import { useSearchParams } from 'next/navigation'
 import { useDebouncedCallback } from 'use-debounce'
-import { IconType } from 'react-icons'
+import Client from '@/types/Client'
 
 interface ClientsTableProps {
   isLoading: Boolean
@@ -60,14 +58,14 @@ function ClientsOverlay() {
 
     setLoading(true)
     getClientsWithParams(params).then(data => {
-      setData(data.clientList)
+      setData(data)
       setLoading(false)
     })
   }, 800)
 
   useEffect(() => {
     getClients().then(data => {
-      setData(data.clientList)
+      setData(data)
       setLoading(false)
     })
   }, [])

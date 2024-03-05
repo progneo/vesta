@@ -1,5 +1,4 @@
 import { useEffect, useState } from 'react'
-import { Client, Father, Mother, Note } from '@prisma/client'
 import { useRouter } from 'next/router'
 import { deleteClientById, getClientById } from '@/lib/clients'
 import {
@@ -17,6 +16,10 @@ import {
 } from '@chakra-ui/react'
 import { FiArrowLeft } from 'react-icons/fi'
 import NextLink from 'next/link'
+import Mother from '@/types/Mother'
+import Father from '@/types/Father'
+import Client from '@/types/Client'
+import Note from '@/types/Note'
 
 interface ClientCardProps {
   client: Client
@@ -90,11 +93,11 @@ function NotesCard({ notes }: NotesCardProps) {
       {notes != undefined && (
         <OrderedList>
           {notes.map((note: Note, i) => {
-            return <ListItem>{note.text}</ListItem>
+            return <ListItem key={i}>{note.text}</ListItem>
           })}
         </OrderedList>
       )}
-      {notes == undefined && <Text>Примечаний нет</Text>}
+      {notes == undefined || (notes.length == 0 && <Text>Примечаний нет</Text>)}
     </Box>
   )
 }
@@ -141,15 +144,15 @@ function ClientPage() {
   const router = useRouter()
   const { id } = router.query
 
+  // @ts-ignore
   const [data, setData] = useState<Client>(null)
   const [isLoading, setLoading] = useState<Boolean>(true)
 
   useEffect(() => {
     if (id) {
       getClientById(Number(id)).then(data => {
-        setData(data.client)
+        setData(data)
         setLoading(false)
-        console.log(data)
       })
     }
   }, [id])
@@ -195,7 +198,7 @@ function ClientPage() {
           <FatherCard father={data.father} />
         </GridItem>
         <GridItem colSpan={2}>
-          <NotesCard notes={data.Note} />
+          <NotesCard notes={data.notes} />
         </GridItem>
       </Grid>
       <Button colorScheme={'red'} onClick={deleteClient} mt={4}>

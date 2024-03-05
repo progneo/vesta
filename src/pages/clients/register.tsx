@@ -8,8 +8,6 @@ import {
   FormLabel,
   HStack,
   Input,
-  Radio,
-  RadioGroup,
   Stack,
   Text
 } from '@chakra-ui/react'
@@ -21,7 +19,8 @@ import { SubmitHandler, useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import InputMask from 'react-input-mask'
 import { useEffect } from 'react'
-import { Father, Mother } from '@prisma/client'
+import Mother from '@/types/Mother'
+import Father from '@/types/Father'
 
 const FormSchema = z.object({
   childFirstName: z.string().min(1, 'First name is required').max(100),
@@ -132,7 +131,7 @@ function ClientRegisterPage() {
     })
 
     if (response.ok) {
-      router.push('/clients')
+      await router.push('/clients')
     } else {
       console.error('Registration failed')
     }
