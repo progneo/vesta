@@ -10,6 +10,7 @@ import {
   ListItem,
   OrderedList,
   Text,
+  UnorderedList,
   VStack
 } from '@chakra-ui/react'
 import { FiArrowLeft } from 'react-icons/fi'
@@ -18,13 +19,10 @@ import Adult from '@/types/Adult'
 import Client from '@/types/Client'
 import Note from '@/types/Note'
 import AdultOfClient from '@/types/AdultOfClient'
+import TestResult from '@/types/TestResult'
 
 interface ClientCardProps {
   client: Client
-}
-
-interface NotesCardProps {
-  notes: Note[]
 }
 
 function ClientCard({ client }: ClientCardProps) {
@@ -38,6 +36,7 @@ function ClientCard({ client }: ClientCardProps) {
     >
       <VStack alignItems={'start'} gap={2}>
         <Box>
+          <Text fontSize={'sm'}>ID клиента: {client.id}</Text>
           <Text fontSize={'2xl'}>{client.lastName}</Text>
           <Text fontSize={'2xl'}>{client.firstName}</Text>
           <Text fontSize={'2xl'}>{client.patronymic}</Text>
@@ -82,7 +81,13 @@ function ScheduleCard() {
   )
 }
 
-function TestingCard() {
+function TestingCard({ testResult }: { testResult: TestResult | undefined }) {
+  let answerList
+
+  if (testResult !== undefined) {
+    answerList = testResult.answers.split(';')
+  }
+
   return (
     <Box
       p={4}
@@ -94,11 +99,21 @@ function TestingCard() {
       <Text fontSize={'xl'} mb={3}>
         Результаты тестирования
       </Text>
+      {answerList != undefined && (
+        <UnorderedList>
+          {answerList.map((answer: String, i) => {
+            return <ListItem key={i}>{answer}</ListItem>
+          })}
+        </UnorderedList>
+      )}
+      {(answerList == undefined || answerList.length == 0) && (
+        <Text>Тестирование не было пройдено</Text>
+      )}
     </Box>
   )
 }
 
-function NotesCard({ notes }: NotesCardProps) {
+function NotesCard({ notes }: { notes: Note[] }) {
   return (
     <Box
       p={4}
@@ -117,7 +132,7 @@ function NotesCard({ notes }: NotesCardProps) {
           })}
         </OrderedList>
       )}
-      {notes == undefined || (notes.length == 0 && <Text>Примечаний нет</Text>)}
+      {(notes == undefined || notes.length == 0) && <Text>Примечаний нет</Text>}
     </Box>
   )
 }
@@ -192,7 +207,12 @@ function ClientPage() {
             <Text>Вернуться</Text>
           </HStack>
         </NextLink>
-        <Button colorScheme={'teal'}>Пройти тестирование</Button>
+        <a
+          href={'https://forms.yandex.ru/cloud/65e5e0905d2a060f9f54b696/'}
+          target={'_blank'}
+        >
+          <Button colorScheme={'teal'}>Пройти тестирование</Button>
+        </a>
       </Flex>
       <HStack mt={4} gap={4} minWidth={'100%'}>
         <VStack minWidth={'30%'}>
@@ -207,7 +227,7 @@ function ClientPage() {
         </VStack>
         <VStack alignSelf={'start'}>
           <ScheduleCard />
-          <TestingCard />
+          <TestingCard testResult={data.tests.pop()} />
           <NotesCard notes={data.notes} />
         </VStack>
       </HStack>
