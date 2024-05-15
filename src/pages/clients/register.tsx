@@ -24,19 +24,25 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import InputMask from 'react-input-mask'
 import { useEffect, useState } from 'react'
 import { createClient } from '@/lib/clients'
-import CreateClientRequest from '@/types/CreateClientRequest'
-import AdultForm from '@/components/adultForm'
-import CreateAdultRequest from '@/types/CreateAdultRequest'
-import { createAdult, createAdultOfClient } from '@/lib/adults'
+import CreateClientRequest from '@/types/requests/create/CreateClientRequest'
+import ResponsibleForm from '@/components/responsibleForm'
+import CreateResponsibleRequest from '@/types/requests/create/CreateResponsibleRequest'
+import {
+  createResponsible,
+  createResponsibleOfClient
+} from '@/lib/responsibles'
+import { createDocument } from '@/lib/documents'
+import CreateDocumentRequest from '@/types/requests/create/CreateDocumentRequest'
 
 const childSchema = z.object({
   firstName: z.string().min(1, 'First name is required').max(100),
   lastName: z.string().min(1, 'Last name is required').max(100),
   patronymic: z.string().min(1, 'Patronymic is required').max(100),
   birthDate: z.coerce.date().max(new Date(), 'Birth date is required'),
-  gender: z.string().length(1, 'Gender is required'),
+  sex: z.string().length(1, 'Gender is required'),
   address: z.string().min(1, 'Address is required'),
-  passport: z.string().min(10, 'Passport is required')
+  series: z.string().min(4, 'Serial is required'),
+  number: z.string().min(6, 'Number is required')
 })
 
 function ClientRegisterPage() {
@@ -47,12 +53,16 @@ function ClientRegisterPage() {
   const [hasCarerFirst, setCarerFirstState] = useState(false)
   const [hasCarerSecond, setCarerSecondState] = useState(false)
 
-  const [motherData, setMotherData] = useState<CreateAdultRequest | null>(null)
-  const [fatherData, setFatherData] = useState<CreateAdultRequest | null>(null)
+  const [motherData, setMotherData] = useState<CreateResponsibleRequest | null>(
+    null
+  )
+  const [fatherData, setFatherData] = useState<CreateResponsibleRequest | null>(
+    null
+  )
   const [carerFirstData, setCarerFirstData] =
-    useState<CreateAdultRequest | null>(null)
+    useState<CreateResponsibleRequest | null>(null)
   const [carerSecondData, setCarerSecondData] =
-    useState<CreateAdultRequest | null>(null)
+    useState<CreateResponsibleRequest | null>(null)
 
   const [canCreate, setCreateAbilityState] = useState(false)
 
@@ -87,43 +97,88 @@ function ClientRegisterPage() {
       lastName: '',
       patronymic: '',
       birthDate: undefined,
-      gender: 'М',
+      sex: 'М',
       address: '',
-      passport: ''
+      series: '',
+      number: ''
     }
   })
 
   type FormSchema = z.infer<typeof childSchema>
 
   const onSubmit: SubmitHandler<FormSchema> = async data => {
-    const newClient: CreateClientRequest = {
-      firstName: data.firstName,
-      lastName: data.lastName,
-      patronymic: data.patronymic,
-      birthDate: data.birthDate,
-      gender: data.gender,
-      address: data.address,
-      identityDocument: data.passport
-    }
-
     try {
+      const newDocument: CreateDocumentRequest = {
+        type: 'passport',
+        series: data.series,
+        number: data.number
+      }
+
+      const document = await createDocument(newDocument)
+
+      const newClient: CreateClientRequest = {
+        firstName: data.firstName,
+        lastName: data.lastName,
+        patronymic: data.patronymic,
+        birthDate: data.birthDate,
+        sex: data.sex,
+        address: data.address,
+        documentId: document.id
+      }
+
       const client = await createClient(newClient)
 
       if (fatherData !== null) {
-        const adult = await createAdult(fatherData)
-        await createAdultOfClient(adult.id, client.id)
+        const newDocument: CreateDocumentRequest = {
+          type: 'passport',
+          series: fatherData.series,
+          number: fatherData.number
+        }
+
+        const document = await createDocument(newDocument)
+        fatherData.documentId = document.id
+
+        const responsible = await createResponsible(fatherData)
+        await createResponsibleOfClient(responsible.id, client.id)
       }
       if (motherData !== null) {
-        const adult = await createAdult(motherData)
-        await createAdultOfClient(adult.id, client.id)
+        const newDocument: CreateDocumentRequest = {
+          type: 'passport',
+          series: motherData.series,
+          number: motherData.number
+        }
+
+        const document = await createDocument(newDocument)
+        motherData.documentId = document.id
+
+        const responsible = await createResponsible(motherData)
+        await createResponsibleOfClient(responsible.id, client.id)
       }
       if (carerFirstData !== null) {
-        const adult = await createAdult(carerFirstData)
-        await createAdultOfClient(adult.id, client.id)
+        const newDocument: CreateDocumentRequest = {
+          type: 'passport',
+          series: carerFirstData.series,
+          number: carerFirstData.number
+        }
+
+        const document = await createDocument(newDocument)
+        carerFirstData.documentId = document.id
+
+        const responsible = await createResponsible(carerFirstData)
+        await createResponsibleOfClient(responsible.id, client.id)
       }
       if (carerSecondData !== null) {
-        const adult = await createAdult(carerSecondData)
-        await createAdultOfClient(adult.id, client.id)
+        const newDocument: CreateDocumentRequest = {
+          type: 'passport',
+          series: carerSecondData.series,
+          number: carerSecondData.number
+        }
+
+        const document = await createDocument(newDocument)
+        carerSecondData.documentId = document.id
+        
+        const responsible = await createResponsible(carerSecondData)
+        await createResponsibleOfClient(responsible.id, client.id)
       }
 
       await router.push('/clients')
@@ -207,14 +262,14 @@ function ClientRegisterPage() {
                   <RadioGroup defaultValue="М" id="gender">
                     <Stack direction="row">
                       <Radio
-                        {...register('gender')}
+                        {...register('sex')}
                         colorScheme={'teal'}
                         value="М"
                       >
                         М
                       </Radio>
                       <Radio
-                        {...register('gender')}
+                        {...register('sex')}
                         colorScheme={'teal'}
                         value="Ж"
                       >
@@ -235,17 +290,33 @@ function ClientRegisterPage() {
                 />
               </FormControl>
               <FormControl>
-                <FormLabel htmlFor="childPassport">Паспорт</FormLabel>
-                <Input
-                  as={InputMask}
-                  {...register('passport')}
-                  isInvalid={!!errors.passport}
-                  errorBorderColor="red.300"
-                  id="childPassport"
-                  mask="**** ******"
-                  placeholder={'0000 123456'}
-                  type="text"
-                />
+                <FormLabel htmlFor="childPassport">
+                  Документ, удостоверяющий личность
+                </FormLabel>
+                <HStack>
+                  <Input
+                    as={InputMask}
+                    {...register('series')}
+                    isInvalid={!!errors.series}
+                    errorBorderColor="red.300"
+                    id="childPassport"
+                    mask="****"
+                    placeholder={'0000'}
+                    type="text"
+                    w={'18%'}
+                  />
+
+                  <Input
+                    as={InputMask}
+                    {...register('number')}
+                    isInvalid={!!errors.number}
+                    errorBorderColor="red.300"
+                    id="childPassport"
+                    mask="******"
+                    placeholder={'123456'}
+                    type="text"
+                  />
+                </HStack>
               </FormControl>
               <HStack gap={5}>
                 <Checkbox
@@ -290,45 +361,45 @@ function ClientRegisterPage() {
         </Flex>
       </form>
       {hasMother && (
-        <AdultForm
+        <ResponsibleForm
           onDataEdit={() => {
             setMotherData(null)
           }}
-          onDataSave={(adultData: CreateAdultRequest) => {
-            setMotherData(adultData)
+          onDataSave={(responsibleData: CreateResponsibleRequest) => {
+            setMotherData(responsibleData)
           }}
           type={'Мать'}
         />
       )}
       {hasFather && (
-        <AdultForm
+        <ResponsibleForm
           onDataEdit={() => {
             setFatherData(null)
           }}
-          onDataSave={(adultData: CreateAdultRequest) => {
-            setFatherData(adultData)
+          onDataSave={(responsibleData: CreateResponsibleRequest) => {
+            setFatherData(responsibleData)
           }}
           type={'Отец'}
         />
       )}
       {hasCarerFirst && (
-        <AdultForm
+        <ResponsibleForm
           onDataEdit={() => {
             setCarerFirstData(null)
           }}
-          onDataSave={(adultData: CreateAdultRequest) => {
-            setCarerFirstData(adultData)
+          onDataSave={(responsibleData: CreateResponsibleRequest) => {
+            setCarerFirstData(responsibleData)
           }}
           type={'Опекун'}
         />
       )}
       {hasCarerSecond && (
-        <AdultForm
+        <ResponsibleForm
           onDataEdit={() => {
             setCarerSecondData(null)
           }}
-          onDataSave={(adultData: CreateAdultRequest) => {
-            setCarerSecondData(adultData)
+          onDataSave={(responsibleData: CreateResponsibleRequest) => {
+            setCarerSecondData(responsibleData)
           }}
           type={'Опекун'}
         />

@@ -30,7 +30,7 @@ function LoginController({ Component, router, pageProps: { ...pageProps } }) {
   if (isLoading) {
     return (
       <Center h={'100vh'}>
-        <CircularProgress />
+        <CircularProgress isIndeterminate />
       </Center>
     )
   }

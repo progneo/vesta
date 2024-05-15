@@ -3,4 +3,5 @@ export default interface UserData {
   lastName: string
   patronymic: string
   role: string
+  userId: number
 }

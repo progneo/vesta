@@ -14,22 +14,23 @@ import {
 } from '@chakra-ui/react'
 import InputMask from 'react-input-mask'
 import { useState } from 'react'
-import CreateAdultRequest from '@/types/CreateAdultRequest'
+import CreateResponsibleRequest from '@/types/requests/create/CreateResponsibleRequest'
 
 const schema = z.object({
   firstName: z.string().min(1, 'First name is required'),
   lastName: z.string().min(1, 'Last name is required'),
   patronymic: z.string().min(1, 'Patronymic is required'),
-  phone: z.string().min(10, 'Phone is required'),
-  identityDocument: z.string().min(10, 'Passport is required')
+  phoneNumber: z.string().min(10, 'Phone is required'),
+  series: z.string().min(4, 'Serial is required'),
+  number: z.string().min(6, 'Number is required')
 })
 
-function AdultForm({
+function ResponsibleForm({
   onDataSave,
   onDataEdit,
   type
 }: {
-  onDataSave: (adultData: CreateAdultRequest) => void
+  onDataSave: (responsibleData: CreateResponsibleRequest) => void
   onDataEdit: () => void
   type: string
 }) {
@@ -41,33 +42,34 @@ function AdultForm({
   }
 
   const onSubmit: SubmitHandler<FormSchema> = async data => {
-    const adultData: CreateAdultRequest = {
+    const responsibleData: CreateResponsibleRequest = {
       firstName: data.firstName,
       lastName: data.lastName,
       patronymic: data.patronymic,
-      phone: data.phone,
-      identityDocument: data.identityDocument,
-      type: type
+      phoneNumber: data.phoneNumber,
+      type: type,
+      series: data.series,
+      number: data.number,
+      documentId: undefined
     }
 
-    console.log(adultData)
-    onDataSave(adultData)
+    onDataSave(responsibleData)
     setSavedState(true)
   }
 
   const {
     register,
     handleSubmit,
-    setFocus,
-    formState: { isSubmitting, errors }
+    formState: { errors }
   } = useForm<z.infer<typeof schema>>({
     resolver: zodResolver(schema),
     defaultValues: {
       firstName: '',
       lastName: '',
       patronymic: '',
-      phone: '',
-      identityDocument: ''
+      phoneNumber: '',
+      series: '',
+      number: ''
     }
   })
 
@@ -126,8 +128,8 @@ function AdultForm({
                 <FormLabel>Телефон</FormLabel>
                 <Input
                   as={InputMask}
-                  {...register('phone')}
-                  isInvalid={!!errors.phone}
+                  {...register('phoneNumber')}
+                  isInvalid={!!errors.phoneNumber}
                   errorBorderColor="red.300"
                   mask="+7(***)***-**-**"
                   placeholder={'+7(___)___-__-__'}
@@ -135,20 +137,33 @@ function AdultForm({
                   isDisabled={isSaved}
                 />
               </FormControl>
-              <FormControl>
-                <FormLabel>Паспорт</FormLabel>
+            </HStack>
+            <FormControl>
+              <FormLabel>Паспорт</FormLabel>
+              <HStack>
                 <Input
                   as={InputMask}
-                  {...register('identityDocument')}
-                  isInvalid={!!errors.identityDocument}
+                  {...register('series')}
+                  isInvalid={!!errors.series}
                   errorBorderColor="red.300"
-                  mask="**** ******"
-                  placeholder={'0000 123456'}
+                  mask="****"
+                  placeholder={'0000'}
+                  inputMode="numeric"
+                  isDisabled={isSaved}
+                  w={'17%'}
+                />
+                <Input
+                  as={InputMask}
+                  {...register('number')}
+                  isInvalid={!!errors.number}
+                  errorBorderColor="red.300"
+                  mask="******"
+                  placeholder={'123456'}
                   inputMode="numeric"
                   isDisabled={isSaved}
                 />
-              </FormControl>
-            </HStack>
+              </HStack>
+            </FormControl>
             {isSaved && (
               <Button colorScheme={'orange'} onClick={enableEditing}>
                 Редактировать данные
@@ -166,4 +181,4 @@ function AdultForm({
   )
 }
 
-export default AdultForm
+export default ResponsibleForm

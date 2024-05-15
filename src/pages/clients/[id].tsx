@@ -11,15 +11,22 @@ import {
   OrderedList,
   Text,
   UnorderedList,
-  VStack
+  VStack,
+  useDisclosure,
+  IconButton
 } from '@chakra-ui/react'
-import { FiArrowLeft } from 'react-icons/fi'
+import { FiArrowLeft, FiMinus, FiPlus } from 'react-icons/fi'
 import NextLink from 'next/link'
-import Adult from '@/types/Adult'
+import Responsible from '@/types/Responsible'
 import Client from '@/types/Client'
 import Note from '@/types/Note'
-import AdultOfClient from '@/types/AdultOfClient'
+import ResponsibleForClient from '@/types/ResponsibleForClient'
 import TestResult from '@/types/TestResult'
+import Appointment from '@/types/Appointment'
+import { useAppSelector } from '@/store/store'
+import CreateNoteModal from '@/components/modal/CreateNoteModal'
+import CreateAppointmentModal from '@/components/modal/CreateAppointmentModal'
+import { deleteNoteById } from '@/lib/note'
 
 interface ClientCardProps {
   client: Client
@@ -36,12 +43,14 @@ function ClientCard({ client }: ClientCardProps) {
     >
       <VStack alignItems={'start'} gap={2}>
         <Box>
-          <Text fontSize={'sm'}>ID клиента: {client.id}</Text>
           <Text fontSize={'2xl'}>{client.lastName}</Text>
           <Text fontSize={'2xl'}>{client.firstName}</Text>
           <Text fontSize={'2xl'}>{client.patronymic}</Text>
         </Box>
-        <Text>Пол: {client.gender}</Text>
+        <Text>
+          Пол: {client.sex === 'М' && 'мужской'}
+          {client.sex === 'Ж' && 'женский'}
+        </Text>
         <Box>
           <Text>Дата рождения:</Text>
           <Text>
@@ -57,15 +66,83 @@ function ClientCard({ client }: ClientCardProps) {
           <Text>{client.address}</Text>
         </Box>
         <Box>
-          <Text>Документ:</Text>
-          <Text>{client.identityDocument}</Text>
+          {client.document.type === 'passport' && <Text>Паспорт:</Text>}
+          {client.document.type !== 'passport' && (
+            <Text>Свидетельство о рождении:</Text>
+          )}
+          <Text>
+            {client.document.series} {client.document.number}
+          </Text>
         </Box>
       </VStack>
     </Box>
   )
 }
 
-function ScheduleCard() {
+function ScheduleCard({
+  appointments,
+  onCreateClick
+}: {
+  appointments: Appointment[]
+  onCreateClick: () => void
+}) {
+  const authState = useAppSelector(state => state.auth)
+
+  return (
+    <Box
+      p={4}
+      border={'2px'}
+      borderColor={'#f0ead2'}
+      rounded={'md'}
+      minWidth={'100%'}
+    >
+      <HStack alignContent={'center'} mb={3} justify={'space-between'}>
+        <Text fontSize={'xl'}>Расписание</Text>
+        {authState.role === 'clientSpecialist' && (
+          <IconButton
+            aria-label={'Добавить запись'}
+            colorScheme={'teal'}
+            variant={'outline'}
+            size={'sm'}
+            icon={<FiPlus />}
+            onClick={onCreateClick}
+          />
+        )}
+      </HStack>
+      <UnorderedList>
+        {appointments.map((appointment: Appointment, i: number) => {
+          return (
+            <ListItem key={i}>
+              {`${appointment.employee.lastName} ${
+                appointment.employee.firstName[0]
+              }.${appointment.employee.patronymic[0]}. - ${
+                appointment.service.name
+              } - ${new Date(appointment.datetime).toLocaleDateString('ru-RU', {
+                year: 'numeric',
+                month: '2-digit',
+                day: '2-digit'
+              })} ${new Date(appointment.datetime).toLocaleTimeString([], {
+                hour: '2-digit',
+                minute: '2-digit'
+              })}`}
+            </ListItem>
+          )
+        })}
+      </UnorderedList>
+      {appointments.length === 0 && <Text>Записей нет</Text>}
+    </Box>
+  )
+}
+
+function TestingCard({
+  testResults,
+  clientId
+}: {
+  testResults: TestResult[]
+  clientId: number
+}) {
+  const authState = useAppSelector(state => state.auth)
+
   return (
     <Box
       p={4}
@@ -74,18 +151,57 @@ function ScheduleCard() {
       rounded="md"
       minWidth={'100%'}
     >
-      <Text fontSize={'xl'} mb={3}>
-        Расписание
-      </Text>
+      <HStack alignContent={'center'} mb={3} justify={'space-between'}>
+        <Text fontSize={'xl'}>Результаты тестирования</Text>
+        {authState.role === 'clientSpecialist' && (
+          <NextLink href={`/clients/testing/${clientId}`}>
+            <IconButton
+              aria-label={'Пройти тестирование'}
+              colorScheme={'teal'}
+              variant={'outline'}
+              size={'sm'}
+              icon={<FiPlus />}
+            />
+          </NextLink>
+        )}
+      </HStack>
+      <UnorderedList>
+        {testResults.map((testResult: TestResult, i: number) => {
+          return (
+            <ListItem key={i}>
+              {new Date(testResult.datetime).toLocaleDateString('ru-RU', {
+                year: 'numeric',
+                month: '2-digit',
+                day: '2-digit'
+              })}{' '}
+              {new Date(testResult.datetime).toLocaleTimeString([], {
+                hour: '2-digit',
+                minute: '2-digit'
+              })}
+            </ListItem>
+          )
+        })}
+      </UnorderedList>
+      {testResults.length === 0 && <Text>Тестирование не было пройдено</Text>}
     </Box>
   )
 }
 
-function TestingCard({ testResult }: { testResult: TestResult | undefined }) {
-  let answerList
-
-  if (testResult !== undefined) {
-    answerList = testResult.answers.split(';')
+function NotesCard({
+  notes,
+  onCreateClick,
+  onDeleteNote
+}: {
+  notes: Note[]
+  onCreateClick: () => void
+  onDeleteNote: () => void
+}) {
+  async function deleteNote(id: number) {
+    await deleteNoteById(id).then(data => {
+      if (data === 204) {
+        onDeleteNote()
+      }
+    })
   }
 
   return (
@@ -93,42 +209,36 @@ function TestingCard({ testResult }: { testResult: TestResult | undefined }) {
       p={4}
       border={'2px'}
       borderColor={'#f0ead2'}
-      rounded="md"
+      rounded={'md'}
       minWidth={'100%'}
     >
-      <Text fontSize={'xl'} mb={3}>
-        Результаты тестирования
-      </Text>
-      {answerList != undefined && (
-        <UnorderedList>
-          {answerList.map((answer: String, i) => {
-            return <ListItem key={i}>{answer}</ListItem>
-          })}
-        </UnorderedList>
-      )}
-      {(answerList == undefined || answerList.length == 0) && (
-        <Text>Тестирование не было пройдено</Text>
-      )}
-    </Box>
-  )
-}
-
-function NotesCard({ notes }: { notes: Note[] }) {
-  return (
-    <Box
-      p={4}
-      border={'2px'}
-      borderColor={'#f0ead2'}
-      rounded="md"
-      minWidth={'100%'}
-    >
-      <Text fontSize={'xl'} mb={3}>
-        Примечания
-      </Text>
+      <HStack alignContent={'center'} mb={3} justify={'space-between'}>
+        <Text fontSize={'xl'}>Примечания</Text>
+        <IconButton
+          aria-label={'Добавить примечание'}
+          colorScheme={'teal'}
+          variant={'outline'}
+          size={'sm'}
+          icon={<FiPlus />}
+          onClick={() => onCreateClick()}
+        />
+      </HStack>
       {notes != undefined && (
         <OrderedList>
           {notes.map((note: Note, i) => {
-            return <ListItem key={i}>{note.text}</ListItem>
+            return (
+              <HStack justifyContent={'space-between'}>
+                <ListItem key={i}>{note.text}</ListItem>
+                <IconButton
+                  aria-label={'Удалить примечание'}
+                  colorScheme={'orange'}
+                  variant={'outline'}
+                  size={'sm'}
+                  icon={<FiMinus />}
+                  onClick={() => deleteNote(note.id)}
+                />
+              </HStack>
+            )
           })}
         </OrderedList>
       )}
@@ -137,7 +247,7 @@ function NotesCard({ notes }: { notes: Note[] }) {
   )
 }
 
-function AdultCard({ adult }: { adult: Adult }) {
+function ResponsibleCard({ responsible }: { responsible: Responsible }) {
   return (
     <Box
       p={4}
@@ -148,20 +258,22 @@ function AdultCard({ adult }: { adult: Adult }) {
     >
       <VStack alignItems={'start'} gap={2}>
         <Text as={'i'} fontSize={'lg'}>
-          {adult.type}
+          {responsible.type}
         </Text>
         <Box>
-          <Text fontSize={'xl'}>{adult.lastName}</Text>
-          <Text fontSize={'xl'}>{adult.firstName}</Text>
-          <Text fontSize={'xl'}>{adult.patronymic}</Text>
+          <Text fontSize={'xl'}>{responsible.lastName}</Text>
+          <Text fontSize={'xl'}>{responsible.firstName}</Text>
+          <Text fontSize={'xl'}>{responsible.patronymic}</Text>
         </Box>
         <Box>
           <Text>Номер телефона:</Text>
-          <Text>{adult.phone}</Text>
+          <Text>{responsible.phoneNumber}</Text>
         </Box>
         <Box>
           <Text>Паспорт:</Text>
-          <Text>{adult.identityDocument}</Text>
+          <Text>
+            {responsible.document.series} {responsible.document.number}
+          </Text>
         </Box>
       </VStack>
     </Box>
@@ -171,23 +283,44 @@ function AdultCard({ adult }: { adult: Adult }) {
 function ClientPage() {
   const router = useRouter()
   const { id } = router.query
+  const authState = useAppSelector(state => state.auth)
 
   // @ts-ignore
   const [data, setData] = useState<Client>(null)
   const [isLoading, setLoading] = useState<Boolean>(true)
 
+  const {
+    isOpen: isOpenAddNoteModal,
+    onOpen: onOpenAddNoteModal,
+    onClose: onCloseAddNoteModal
+  } = useDisclosure()
+
+  const {
+    isOpen: isOpenAddAppointmentModal,
+    onOpen: onOpenAddAppointmentModal,
+    onClose: onCloseAddAppointmentModal
+  } = useDisclosure()
+
   useEffect(() => {
     if (id) {
-      getClientById(Number(id)).then(data => {
-        setData(data)
-        setLoading(false)
-      })
+      getClient(Number(id))
     }
   }, [id])
 
+  async function getClient(id: number) {
+    setLoading(true)
+    getClientById(id).then(data => {
+      setData(data)
+      setLoading(false)
+    })
+  }
+
   async function deleteClient() {
-    await deleteClientById(Number(id))
-    await router.push('/clients')
+    await deleteClientById(Number(id)).then(data => {
+      if (data === 204) {
+        router.push('/clients')
+      }
+    })
   }
 
   if (isLoading) {
@@ -200,40 +333,66 @@ function ClientPage() {
 
   return (
     <Box px={3}>
+      <CreateNoteModal
+        clientId={Number(id)}
+        onSubmit={() => getClient(Number(id))}
+        onClose={onCloseAddNoteModal}
+        isOpen={isOpenAddNoteModal}
+      />
+      <CreateAppointmentModal
+        clientId={Number(id)}
+        onSubmit={() => getClient(Number(id))}
+        onClose={onCloseAddAppointmentModal}
+        isOpen={isOpenAddAppointmentModal}
+      />
       <Flex w="100%" alignItems="center" justifyContent="space-between">
-        <NextLink href={'/clients'}>
-          <HStack>
-            <FiArrowLeft />
-            <Text>Вернуться</Text>
-          </HStack>
-        </NextLink>
-        <a
-          href={'https://forms.yandex.ru/cloud/65e5e0905d2a060f9f54b696/'}
-          target={'_blank'}
-        >
-          <Button colorScheme={'teal'}>Пройти тестирование</Button>
-        </a>
+        {authState.role === 'clientSpecialist' && (
+          <NextLink href={'/clients'}>
+            <HStack>
+              <FiArrowLeft />
+              <Text>Вернуться</Text>
+            </HStack>
+          </NextLink>
+        )}
+        {authState.role === 'specialist' && (
+          <NextLink href={'/'}>
+            <HStack>
+              <FiArrowLeft />
+              <Text>Вернуться</Text>
+            </HStack>
+          </NextLink>
+        )}
       </Flex>
       <HStack mt={4} gap={4} minWidth={'100%'}>
         <VStack minWidth={'30%'}>
           <ClientCard client={data} />
-          {data.adultsOfClient.map(
-            (adultOfClient: AdultOfClient, key: number) => {
-              if (adultOfClient.adult !== undefined) {
-                return <AdultCard adult={adultOfClient.adult} key={key} />
+          {data.responsiblesForClient?.map(
+            (responsibleForClient: ResponsibleForClient, key: number) => {
+              if (responsibleForClient.responsible !== undefined) {
+                return (
+                  <ResponsibleCard
+                    responsible={responsibleForClient.responsible}
+                    key={key}
+                  />
+                )
               }
             }
           )}
         </VStack>
         <VStack alignSelf={'start'}>
-          <ScheduleCard />
-          <TestingCard testResult={data.tests.pop()} />
-          <NotesCard notes={data.notes} />
+          <ScheduleCard
+            appointments={data.appointments}
+            onCreateClick={onOpenAddAppointmentModal}
+          />
+          <TestingCard testResults={data.testings} clientId={Number(id)} />
+          <NotesCard notes={data.notes} onCreateClick={onOpenAddNoteModal} onDeleteNote={() => getClient(Number(id))} />
         </VStack>
       </HStack>
-      <Button colorScheme={'red'} onClick={deleteClient} mt={4}>
-        Удалить клиента
-      </Button>
+      {authState.role === 'clientSpecialist' && (
+        <Button colorScheme={'red'} onClick={deleteClient} mt={4}>
+          Удалить клиента
+        </Button>
+      )}
     </Box>
   )
 }

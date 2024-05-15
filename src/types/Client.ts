@@ -1,17 +1,20 @@
 import Note from '@/types/Note'
-import AdultOfClient from '@/types/AdultOfClient'
+import ResponsibleForClient from '@/types/ResponsibleForClient'
 import TestResult from '@/types/TestResult'
+import Document from '@/types/Document'
+import Appointment from './Appointment'
 
 export default interface Client {
   id: number
   firstName: string
   lastName: string
   patronymic: string
-  gender: string
+  sex: string
   birthDate: Date
   address: string
-  identityDocument: string
-  adultsOfClient: AdultOfClient[]
+  document: Document
+  responsiblesForClient: ResponsibleForClient[]
   notes: Note[]
-  tests: TestResult[]
+  testings: TestResult[]
+  appointments: Appointment[]
 }

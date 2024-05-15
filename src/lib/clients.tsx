@@ -1,4 +1,4 @@
-import CreateClientRequest from '@/types/CreateClientRequest'
+import CreateClientRequest from '@/types/requests/create/CreateClientRequest'
 
 const createClient = async (client: CreateClientRequest) => {
   const response = await fetch(`/api/clients`, {
@@ -10,10 +10,10 @@ const createClient = async (client: CreateClientRequest) => {
       firstName: client.firstName,
       lastName: client.lastName,
       patronymic: client.patronymic,
-      gender: client.gender,
+      sex: client.sex,
       birthDate: client.birthDate,
       address: client.address,
-      identityDocument: client.identityDocument
+      documentId: client.documentId
     })
   })
 
@@ -54,7 +54,7 @@ const deleteClientById = async (id: Number) => {
   if (!response.ok) {
     throw new Error('Error fetching clients')
   }
-  return response.json()
+  return response.status
 }
 
 export {

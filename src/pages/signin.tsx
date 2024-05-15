@@ -50,7 +50,7 @@ function SignInCard() {
     await login({ username, password }).then(status => {
       if (status === 200) {
         dispatch(setAuthState(true))
-        router.push('/clients')
+        router.push('/')
       }
     })
   }

@@ -2,8 +2,8 @@ export default interface CreateClientRequest {
   firstName: string
   lastName: string
   patronymic: string
-  gender: string
+  sex: string
   birthDate: Date
   address: string
-  identityDocument: string
+  documentId: number
 }
