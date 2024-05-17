@@ -50,7 +50,7 @@ const LinkItems: Array<LinkItemProps> = [
   {
     name: 'Календарь',
     icon: FiCalendar,
-    href: '/',
+    href: '/calendar',
     roles: ['admin', 'clientSpecialist', 'specialist']
   },
   {

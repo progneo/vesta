@@ -36,6 +36,8 @@ import { deleteNoteById } from '@/lib/note'
 import TestingResultsModal from '@/components/modal/TestingResultsModal'
 import { getTestingsOfClient } from '@/lib/testing'
 import ScoresByCategory from '@/types/ScoresByCategory'
+import 'chart.js/auto'
+import { Line, Bar } from 'react-chartjs-2'
 
 function ClientCard({ client }: { client: Client }) {
   return (
@@ -175,7 +177,75 @@ function StatisticsCard({
   testResults: ScoresByCategory[]
   onTestingClick: (testingId: number) => void
 }) {
-  return <Box></Box>
+  return (
+    <Box>
+      {testResults.map((result: ScoresByCategory, index: number) => (
+        <ScoresGraphCard
+          key={index}
+          testResults={result}
+          onTestingClick={onTestingClick}
+        />
+      ))}
+    </Box>
+  )
+}
+
+function ScoresGraphCard({
+  testResults,
+  onTestingClick
+}: {
+  testResults: ScoresByCategory
+  onTestingClick: (testingId: number) => void
+}) {
+  const data = {
+    labels: testResults.scores.map(result =>
+      new Date(result.datetime).toLocaleDateString('ru-RU', {
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit'
+      })
+    ),
+    datasets: [
+      {
+        data: testResults.scores.map(result => result.score),
+        backgroundColor: 'rgb(146, 178, 62, 0.4)',
+        borderColor: 'rgb(146, 178, 62)',
+        borderWidth: 1
+      }
+    ]
+  }
+
+  const options = {
+    scales: {
+      y: {
+        beginAtZero: false,
+        precision: 0
+      }
+    },
+    plugins: {
+      legend: {
+        display: false
+      }
+    },
+    //@ts-ignore
+    onClick: (_, elements) => {
+      if (elements.length > 0) {
+        const index = elements[0].index;
+        const testingId = testResults.scores[index].id;
+        onTestingClick(testingId);
+      }
+    }
+  }
+
+  return (
+    <Box>
+      <Text fontSize={'xl'} mb={'2'}>
+        Категория: {testResults.categoryName}
+      </Text>
+      <Line data={data} options={options} />
+      <Divider my={'3'} />
+    </Box>
+  )
 }
 
 function ScheduleCard({
@@ -382,25 +452,13 @@ function ClientPage() {
       />
 
       <Flex w="100%" alignItems="center" justifyContent="space-between">
-        {authState.role === 'clientSpecialist' && (
-          <NextLink href={'/clients'}>
-            <HStack>
-              <FiArrowLeft />
-              <Text>Вернуться</Text>
-            </HStack>
-          </NextLink>
-        )}
-        {authState.role === 'specialist' && (
-          <NextLink href={'/'}>
-            <HStack>
-              <FiArrowLeft />
-              <Text>Вернуться</Text>
-            </HStack>
-          </NextLink>
-        )}
+        <HStack onClick={() => router.back()} _hover={{ cursor: 'pointer' }}>
+          <FiArrowLeft />
+          <Text>Вернуться</Text>
+        </HStack>
       </Flex>
       <HStack mt={4} gap={4} minWidth={'100%'}>
-        <VStack minWidth={'30%'}>
+        <VStack minWidth={'30%'} alignSelf={'start'}>
           <ClientCard client={clientData} />
           {clientData.responsiblesForClient?.map(
             (responsibleForClient: ResponsibleForClient, key: number) => {
@@ -415,7 +473,7 @@ function ClientPage() {
             }
           )}
         </VStack>
-        <VStack alignSelf={'start'}>
+        <VStack alignSelf={'start'} minWidth={'40%'}>
           <Box
             border={'2px'}
             borderColor={'#f0ead2'}
@@ -477,11 +535,6 @@ function ClientPage() {
           />
         </VStack>
       </HStack>
-      {authState.role === 'clientSpecialist' && (
-        <Button colorScheme={'red'} onClick={deleteClient} mt={4}>
-          Удалить клиента
-        </Button>
-      )}
     </Box>
   )
 }
