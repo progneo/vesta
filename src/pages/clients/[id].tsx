@@ -3,23 +3,21 @@ import { useRouter } from 'next/router'
 import { deleteClientById, getClientById } from '@/lib/clients'
 import {
   Box,
-  Button,
   CircularProgress,
+  Divider,
   Flex,
   HStack,
+  IconButton,
   ListItem,
   OrderedList,
-  Text,
-  UnorderedList,
-  VStack,
-  useDisclosure,
-  IconButton,
-  Tabs,
-  TabList,
-  TabPanels,
   Tab,
+  TabList,
   TabPanel,
-  Divider
+  TabPanels,
+  Tabs,
+  Text,
+  useDisclosure,
+  VStack
 } from '@chakra-ui/react'
 import { FiArrowLeft, FiMinus, FiPlus } from 'react-icons/fi'
 import NextLink from 'next/link'
@@ -37,7 +35,7 @@ import TestingResultsModal from '@/components/modal/TestingResultsModal'
 import { getTestingsOfClient } from '@/lib/testing'
 import ScoresByCategory from '@/types/ScoresByCategory'
 import 'chart.js/auto'
-import { Line, Bar } from 'react-chartjs-2'
+import { Line } from 'react-chartjs-2'
 
 function ClientCard({ client }: { client: Client }) {
   return (
@@ -133,7 +131,28 @@ function TestingCard({
   return (
     <Box>
       <HStack alignContent={'center'} justify={'space-between'}>
-        <Text fontSize={'xl'}>Результаты тестирования</Text>
+        <OrderedList>
+          {testResults.map((testResult: TestResult, i: number) => {
+            return (
+              <ListItem
+                key={i}
+                onClick={() => onTestingClick(testResult.id)}
+                _hover={{ cursor: 'pointer' }}
+              >
+                <HStack gap={'1'}>
+                  <Text>Результаты тестирования:</Text>
+                  <Text color="teal.500">
+                    {new Date(testResult.datetime).toLocaleDateString('ru-RU', {
+                      year: 'numeric',
+                      month: '2-digit',
+                      day: '2-digit'
+                    })}
+                  </Text>
+                </HStack>
+              </ListItem>
+            )
+          })}
+        </OrderedList>
         {authState.role === 'clientSpecialist' && (
           <NextLink href={`/clients/testing/${clientId}`}>
             <IconButton
@@ -146,25 +165,6 @@ function TestingCard({
           </NextLink>
         )}
       </HStack>
-      <Divider my={3} />
-      <OrderedList>
-        {testResults.map((testResult: TestResult, i: number) => {
-          return (
-            <ListItem key={i} onClick={() => onTestingClick(testResult.id)}>
-              <HStack gap={'1'}>
-                <Text>Результаты тестирования:</Text>
-                <Text color="teal.500">
-                  {new Date(testResult.datetime).toLocaleDateString('ru-RU', {
-                    year: 'numeric',
-                    month: '2-digit',
-                    day: '2-digit'
-                  })}
-                </Text>
-              </HStack>
-            </ListItem>
-          )
-        })}
-      </OrderedList>
       {testResults.length === 0 && <Text>Тестирование не было пройдено</Text>}
     </Box>
   )
@@ -230,9 +230,9 @@ function ScoresGraphCard({
     //@ts-ignore
     onClick: (_, elements) => {
       if (elements.length > 0) {
-        const index = elements[0].index;
-        const testingId = testResults.scores[index].id;
-        onTestingClick(testingId);
+        const index = elements[0].index
+        const testingId = testResults.scores[index].id
+        onTestingClick(testingId)
       }
     }
   }
@@ -371,7 +371,6 @@ function NotesCard({
 function ClientPage() {
   const router = useRouter()
   const { id } = router.query
-  const authState = useAppSelector(state => state.auth)
 
   // @ts-ignore
   const [clientData, setClientData] = useState<Client>(null)

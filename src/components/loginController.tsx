@@ -2,12 +2,19 @@ import React, { useEffect, useState } from 'react'
 import { useAppDispatch, useAppSelector } from '@/store/store'
 import { getAuthorizationStatus, getMe } from '@/lib/auth'
 import { setAuthState, setUserData } from '@/store/authSlice'
-import SignInCard from '@/pages/signin'
-import { Box, Center, CircularProgress } from '@chakra-ui/react'
+import { Center, CircularProgress } from '@chakra-ui/react'
 import Layout from '@/pages/layout'
+import { NextRouter } from 'next/router'
 
-// @ts-ignore
-function LoginController({ Component, router, pageProps: { ...pageProps } }) {
+function LoginController({
+  Component,
+  router,
+  pageProps: { ...pageProps }
+}: {
+  Component: React.ComponentType<any>
+  router: NextRouter
+  pageProps: any
+}) {
   const dispatch = useAppDispatch()
   const authState = useAppSelector(state => state.auth)
 
@@ -25,7 +32,7 @@ function LoginController({ Component, router, pageProps: { ...pageProps } }) {
 
       setLoading(false)
     })
-  }, [authState])
+  }, [])
 
   if (isLoading) {
     return (

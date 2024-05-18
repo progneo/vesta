@@ -1,12 +1,12 @@
 import {
-  Flex,
   Box,
+  Button,
+  Flex,
   FormControl,
   FormLabel,
+  Heading,
   Input,
   Stack,
-  Button,
-  Heading,
   VStack
 } from '@chakra-ui/react'
 import { z } from 'zod'
@@ -14,10 +14,9 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { SubmitHandler, useForm } from 'react-hook-form'
 import { useEffect } from 'react'
 import { useRouter } from 'next/router'
-import { login } from '@/lib/auth'
-import { redirect } from 'next/navigation'
+import { getMe, login } from '@/lib/auth'
 import { useAppDispatch } from '@/store/store'
-import { setAuthState } from '@/store/authSlice'
+import { setAuthState, setUserData } from '@/store/authSlice'
 
 const FormSchema = z.object({
   username: z.string().min(1, 'Username is required'),
@@ -50,6 +49,10 @@ function SignInCard() {
     await login({ username, password }).then(status => {
       if (status === 200) {
         dispatch(setAuthState(true))
+        getMe().then(userData => {
+          dispatch(setUserData(userData))
+        })
+
         router.push('/calendar')
       }
     })

@@ -12,7 +12,13 @@ import {
   Text,
   useDisclosure
 } from '@chakra-ui/react'
-import { FiCalendar, FiLogOut, FiMenu, FiUsers } from 'react-icons/fi'
+import {
+  FiCalendar,
+  FiLogOut,
+  FiMenu,
+  FiSettings,
+  FiUsers
+} from 'react-icons/fi'
 import { IconType } from 'react-icons'
 import React from 'react'
 import NextLink from 'next/link'
@@ -51,13 +57,19 @@ const LinkItems: Array<LinkItemProps> = [
     name: 'Календарь',
     icon: FiCalendar,
     href: '/calendar',
-    roles: ['admin', 'clientSpecialist', 'specialist']
+    roles: ['clientSpecialist', 'specialist']
   },
   {
     name: 'Клиенты',
     icon: FiUsers,
     href: '/clients',
     roles: ['admin', 'clientSpecialist']
+  },
+  {
+    name: 'Админ',
+    icon: FiSettings,
+    href: '/admin',
+    roles: ['admin']
   }
 ]
 

@@ -1,5 +1,6 @@
 export default interface Service {
-    id: number
-    name: string
-    duration: number
+  id: number
+  name: string
+  duration: number
+  isActive: boolean
 }
