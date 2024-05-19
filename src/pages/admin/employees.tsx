@@ -15,8 +15,8 @@ import {
   Tr
 } from '@chakra-ui/react'
 import { FiEdit, FiPlus } from 'react-icons/fi'
-import EditEmployeeModal from '@/admin/modal/EditEmployeeModal'
-import CreateEmployeeModal from '@/admin/modal/CreateEmployeeModal'
+import EditEmployeeModal from '@/admin/components/modal/EditEmployeeModal'
+import CreateEmployeeModal from '@/admin/components/modal/CreateEmployeeModal'
 
 const EmployeesPage = () => {
   const [employeeList, setEmployeeList] = useState<Employee[] | null>(null)

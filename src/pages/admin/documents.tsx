@@ -14,7 +14,7 @@ import {
   Tr
 } from '@chakra-ui/react'
 import { FiEdit } from 'react-icons/fi'
-import EditDocumentModal from '@/admin/modal/EditDocumentModal'
+import EditDocumentModal from '@/admin/components/modal/EditDocumentModal'
 
 const DocumentsPage = () => {
   const [documentList, setDocumentList] = useState<Document[] | null>(null)

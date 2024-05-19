@@ -14,7 +14,7 @@ import {
   Tr
 } from '@chakra-ui/react'
 import { FiEdit } from 'react-icons/fi'
-import EditResponsibleModal from '@/admin/modal/EditResponsibleModal'
+import EditResponsibleModal from '@/admin/components/modal/EditResponsibleModal'
 
 const ResponsiblesPage = () => {
   const [responsibleList, setResponsibleList] = useState<Responsible[] | null>(

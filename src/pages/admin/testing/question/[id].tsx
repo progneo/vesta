@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useRouter } from 'next/router'
 import {
   Box,
@@ -21,9 +21,9 @@ import {
 } from '@/admin/lib/testing'
 import TestQuestionAnswer from '@/admin/types/models/TestQuestionAnswer'
 import { FiArrowLeft, FiEdit, FiPlus } from 'react-icons/fi'
-import CreateTestQuestionAnswerModal from '@/admin/modal/CreateTestAnswerModal'
-import EditTestQuestionAnswerModal from '@/admin/modal/EditTestAnswerModal'
 import TestQuestion from '@/admin/types/models/TestQuestion'
+import CreateTestAnswerModal from '@/admin/components/modal/CreateTestAnswerModal'
+import EditTestAnswerModal from '@/admin/components/modal/EditTestAnswerModal'
 
 const QuestionPage = () => {
   const router = useRouter()
@@ -76,12 +76,12 @@ const QuestionPage = () => {
 
   return (
     <>
-      <CreateTestQuestionAnswerModal
+      <CreateTestAnswerModal
         isOpen={creatingQuestion}
         onClose={closeCreateTestQuestionAnswerForm}
         onSubmit={createTestQuestionAnswer}
       />
-      <EditTestQuestionAnswerModal
+      <EditTestAnswerModal
         isOpen={editingTestQuestionAnswer !== null}
         onClose={closeEditTestQuestionAnswerForm}
         answer={editingTestQuestionAnswer!}

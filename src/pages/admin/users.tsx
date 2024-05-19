@@ -20,9 +20,9 @@ import {
   postUser,
   putUser
 } from '@/admin/lib/users'
-import ChangePasswordModal from '@/admin/modal/ChangePasswordModal'
-import EditUserModal from '@/admin/modal/EditUserModal'
-import CreateUserModal from '@/admin/modal/CreateUserModal'
+import CreateUserModal from '@/admin/components/modal/CreateUserModal'
+import ChangePasswordModal from '@/admin/components/modal/ChangePasswordModal'
+import EditUserModal from '@/admin/components/modal/EditUserModal'
 
 const UsersPage = () => {
   const [userList, setUserList] = useState<User[] | null>(null)

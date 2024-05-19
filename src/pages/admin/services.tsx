@@ -15,8 +15,8 @@ import {
 import { FiEdit, FiPlus } from 'react-icons/fi'
 import Service from '@/admin/types/models/Service'
 import { getServices, postService, putService } from '@/admin/lib/services'
-import EditServiceModal from '@/admin/modal/EditServiceModal'
-import CreateServiceModal from '@/admin/modal/CreateServiceModal'
+import CreateServiceModal from '@/admin/components/modal/CreateServiceModal'
+import EditServiceModal from '@/admin/components/modal/EditServiceModal'
 
 const ServicesPage = () => {
   const [serviceList, setServiceList] = useState<Service[] | null>(null)

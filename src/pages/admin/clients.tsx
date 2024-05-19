@@ -1,6 +1,6 @@
 import { getClients, putClient } from '@/admin/lib/clients'
 import Client from '@/admin/types/models/Client'
-import { useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import {
   HStack,
   IconButton,
@@ -14,7 +14,7 @@ import {
   Tr
 } from '@chakra-ui/react'
 import { FiEdit } from 'react-icons/fi'
-import EditClientModal from '@/admin/modal/EditClientModal'
+import EditClientModal from '@/admin/components/modal/EditClientModal'
 
 const ClientsPage = () => {
   const [clientList, setClientList] = useState<Client[] | null>(null)

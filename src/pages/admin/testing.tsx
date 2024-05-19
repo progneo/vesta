@@ -18,10 +18,10 @@ import {
   postTestCategory,
   putTestCategory
 } from '@/admin/lib/testing'
-import EditTestCategoryModal from '@/admin/modal/EditTestCategoryModal'
-import CreateTestCategoryModal from '@/admin/modal/CreateTestCategoryModal'
 import TestQuestionCategory from '@/admin/types/models/TestQuestionCategory'
 import { useRouter } from 'next/router'
+import CreateTestCategoryModal from '@/admin/components/modal/CreateTestCategoryModal'
+import EditTestCategoryModal from '@/admin/components/modal/EditTestCategoryModal'
 
 const TestCategorysPage = () => {
   const router = useRouter()

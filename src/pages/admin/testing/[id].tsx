@@ -22,8 +22,8 @@ import {
 import TestQuestion from '@/admin/types/models/TestQuestion'
 import TestQuestionCategory from '@/admin/types/models/TestQuestionCategory'
 import { FiArrowLeft, FiEdit, FiPlus } from 'react-icons/fi'
-import CreateTestQuestionModal from '@/admin/modal/CreateTestQuestionModal'
-import EditTestQuestionModal from '@/admin/modal/EditTestQuestionModal'
+import CreateTestQuestionModal from '@/admin/components/modal/CreateTestQuestionModal'
+import EditTestQuestionModal from '@/admin/components/modal/EditTestQuestionModal'
 
 const CategoryPage = () => {
   const router = useRouter()
