@@ -41,6 +41,7 @@ const childSchema = z.object({
   birthDate: z.coerce.date().max(new Date(), 'Birth date is required'),
   sex: z.string().length(1, 'Gender is required'),
   address: z.string().min(1, 'Address is required'),
+  document: z.string().min(1, 'Document is required'),
   series: z.string().min(4, 'Serial is required'),
   number: z.string().min(6, 'Number is required')
 })
@@ -99,6 +100,7 @@ function ClientRegisterPage() {
       birthDate: undefined,
       sex: 'М',
       address: '',
+      document: 'passport',
       series: '',
       number: ''
     }
@@ -109,7 +111,7 @@ function ClientRegisterPage() {
   const onSubmit: SubmitHandler<FormSchema> = async data => {
     try {
       const newDocument: CreateDocumentRequest = {
-        type: 'passport',
+        type: data.document,
         series: data.series,
         number: data.number
       }
@@ -258,8 +260,8 @@ function ClientRegisterPage() {
                   />
                 </FormControl>
                 <FormControl>
-                  <FormLabel htmlFor="gender">Пол</FormLabel>
-                  <RadioGroup defaultValue="М" id="gender">
+                  <FormLabel htmlFor="sex">Пол</FormLabel>
+                  <RadioGroup defaultValue="М" id="sex">
                     <Stack direction="row">
                       <Radio
                         {...register('sex')}
@@ -293,6 +295,24 @@ function ClientRegisterPage() {
                 <FormLabel htmlFor="childPassport">
                   Документ, удостоверяющий личность
                 </FormLabel>
+                <RadioGroup defaultValue="passport" id="document" mb={3}>
+                  <Stack direction="row">
+                    <Radio
+                      {...register('document')}
+                      colorScheme={'accentGreen'}
+                      value="passport"
+                    >
+                      Паспорт
+                    </Radio>
+                    <Radio
+                      {...register('document')}
+                      colorScheme={'accentGreen'}
+                      value="birthCertificate"
+                    >
+                      Свидетельство о рождении
+                    </Radio>
+                  </Stack>
+                </RadioGroup>
                 <HStack>
                   <Input
                     as={InputMask}

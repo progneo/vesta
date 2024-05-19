@@ -56,7 +56,7 @@ const ResponsiblesPage = () => {
       />
       <HStack justifyContent={'space-between'} alignContent={'center'} p={3}>
         <Text fontSize={'xl'} fontWeight={'semibold'}>
-          Список ответственных за клиентов
+          Список представителей за клиентов
         </Text>
       </HStack>
       <Table>

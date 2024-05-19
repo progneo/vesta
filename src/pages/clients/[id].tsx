@@ -42,7 +42,7 @@ function ClientCard({ client }: { client: Client }) {
     <Box
       p={4}
       border={'2px'}
-      borderColor={'#c5846299'}
+      borderColor={'#f0ead2'}
       rounded="md"
       minWidth={'100%'}
     >
@@ -89,7 +89,7 @@ function ResponsibleCard({ responsible }: { responsible: Responsible }) {
     <Box
       p={4}
       border={'2px'}
-      borderColor={'#c5846299'}
+      borderColor={'#f0ead2'}
       rounded={'md'}
       minWidth={'100%'}
     >

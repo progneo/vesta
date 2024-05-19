@@ -7,12 +7,7 @@ import {
   ModalHeader,
   ModalOverlay
 } from '@chakra-ui/modal'
-import {
-  Button,
-  FormControl,
-  FormLabel,
-  Textarea
-} from '@chakra-ui/react'
+import { Button, FormControl, FormLabel, Textarea } from '@chakra-ui/react'
 import { z } from 'zod'
 import { SubmitHandler, useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
@@ -88,9 +83,8 @@ function CreateNoteModal({
           </ModalBody>
 
           <ModalFooter>
-            <Button onClick={onClose}>Отмена</Button>
             <Button
-              color={'teal'}
+              colorScheme={'accentGreen'}
               ml={3}
               isLoading={isSubmitting}
               type="submit"

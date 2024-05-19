@@ -14,21 +14,32 @@ interface MainProps {
 const Layout = ({ children, router }: MainProps) => {
   const authState = useAppSelector(state => state.auth)
 
-  return (
-    <Box>
-      <Head>
-        <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <title>Vesta</title>
-      </Head>
-      {authState.role === 'admin' && router.asPath.includes('/admin') && (
+  if (authState.role === 'admin' && router.asPath.includes('/admin')) {
+    return (
+      <Box>
+        <Head>
+          <meta name="viewport" content="width=device-width, initial-scale=1" />
+          <title>Vesta</title>
+        </Head>
         <AdminSidebar path={router.asPath}>{children}</AdminSidebar>
-      )}
-      {authState.role !== 'admin' ||
-        (!router.asPath.includes('/admin') && authState.role === 'admin' && (
-          <SidebarWithHeader path={router.asPath}>{children}</SidebarWithHeader>
-        ))}
-    </Box>
-  )
+      </Box>
+    )
+  }
+
+  if (
+    authState.role !== 'admin' ||
+    (!router.asPath.includes('/admin') && authState.role === 'admin')
+  ) {
+    return (
+      <Box>
+        <Head>
+          <meta name="viewport" content="width=device-width, initial-scale=1" />
+          <title>Vesta</title>
+        </Head>
+        <SidebarWithHeader path={router.asPath}>{children}</SidebarWithHeader>
+      </Box>
+    )
+  }
 }
 
 export default Layout

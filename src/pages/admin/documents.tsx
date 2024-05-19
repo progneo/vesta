@@ -53,7 +53,7 @@ const DocumentsPage = () => {
       />
       <HStack justifyContent={'space-between'} alignContent={'center'} p={3}>
         <Text fontSize={'xl'} fontWeight={'semibold'}>
-          Список документов подтверждающих личность
+          Список документов, подтверждающих личность
         </Text>
       </HStack>
       <Table>

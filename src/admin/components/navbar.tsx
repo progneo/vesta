@@ -40,7 +40,7 @@ const LinkItems: Array<LinkItemProps> = [
     href: '/admin/clients'
   },
   {
-    name: 'Ответственные',
+    name: 'Представители',
     icon: undefined,
     href: '/admin/responsibles'
   },
