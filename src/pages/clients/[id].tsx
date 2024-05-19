@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/router'
-import { deleteClientById, getClientById } from '@/lib/clients'
+import { getClientById } from '@/lib/clients'
 import {
   Box,
   CircularProgress,
@@ -141,7 +141,7 @@ function TestingCard({
               >
                 <HStack gap={'1'}>
                   <Text>Результаты тестирования:</Text>
-                  <Text color="teal.500">
+                  <Text color="accentGreen.900">
                     {new Date(testResult.datetime).toLocaleDateString('ru-RU', {
                       year: 'numeric',
                       month: '2-digit',
@@ -157,7 +157,7 @@ function TestingCard({
           <NextLink href={`/clients/testing/${clientId}`}>
             <IconButton
               aria-label={'Пройти тестирование'}
-              colorScheme={'teal'}
+              colorScheme={'accentGreen'}
               variant={'outline'}
               size={'sm'}
               icon={<FiPlus />}
@@ -270,7 +270,7 @@ function ScheduleCard({
         {authState.role === 'clientSpecialist' && (
           <IconButton
             aria-label={'Добавить запись'}
-            colorScheme={'teal'}
+            colorScheme={'accentGreen'}
             variant={'outline'}
             size={'sm'}
             icon={<FiPlus />}
@@ -282,8 +282,8 @@ function ScheduleCard({
         <Divider />
         {appointments.map((appointment: Appointment, i: number) => {
           return (
-            <VStack minWidth={'100%'}>
-              <Text key={i} minWidth={'100%'}>
+            <VStack minWidth={'100%'} key={i}>
+              <Text minWidth={'100%'}>
                 {`${new Date(appointment.datetime).toLocaleDateString('ru-RU', {
                   year: 'numeric',
                   month: '2-digit',
@@ -336,7 +336,7 @@ function NotesCard({
         <Text fontSize={'xl'}>Примечания</Text>
         <IconButton
           aria-label={'Добавить примечание'}
-          colorScheme={'teal'}
+          colorScheme={'accentGreen'}
           variant={'outline'}
           size={'sm'}
           icon={<FiPlus />}
@@ -348,8 +348,8 @@ function NotesCard({
         <OrderedList>
           {notes.map((note: Note, i) => {
             return (
-              <HStack justifyContent={'space-between'}>
-                <ListItem key={i}>{note.text}</ListItem>
+              <HStack justifyContent={'space-between'} key={i}>
+                <ListItem>{note.text}</ListItem>
                 <IconButton
                   aria-label={'Удалить примечание'}
                   colorScheme={'orange'}
@@ -411,14 +411,6 @@ function ClientPage() {
         setTestingsData(data)
         setLoading(false)
       })
-    })
-  }
-
-  async function deleteClient() {
-    await deleteClientById(Number(id)).then(data => {
-      if (data === 204) {
-        router.push('/clients')
-      }
     })
   }
 

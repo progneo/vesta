@@ -52,7 +52,7 @@ function QuestionCard({
         {question.testQuestionAnswers.map(answer => (
           <Box key={answer.id}>
             <Checkbox
-              colorScheme={'teal'}
+              colorScheme={'accentGreen'}
               onChange={e => handleCheckboxChange(answer.id, e.target.checked)}
             >
               {answer.text}
@@ -74,7 +74,7 @@ function QuestionCard({
         <VStack gap={1} alignItems={'start'}>
           {question.testQuestionAnswers.map(answer => (
             <Box key={answer.id}>
-              <Radio value={String(answer.id)} colorScheme={'teal'}>
+              <Radio value={String(answer.id)} colorScheme={'accentGreen'}>
                 {answer.text}
               </Radio>
             </Box>
@@ -197,7 +197,7 @@ function TestingPage() {
         categories={testing}
         onAnswerSelected={handleAnswerSelected}
       />
-      <Button colorScheme={'teal'} type="submit" onClick={handleSave}>
+      <Button colorScheme={'accentGreen'} type="submit" onClick={handleSave}>
         Сохранить
       </Button>
     </VStack>

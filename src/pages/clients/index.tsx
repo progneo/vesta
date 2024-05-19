@@ -75,7 +75,7 @@ function ClientsOverlay() {
   return (
     <Box>
       <NextLink href={'/clients/register'}>
-        <Button colorScheme="teal">Регистрация клиента</Button>
+        <Button colorScheme="accentGreen">Регистрация клиента</Button>
       </NextLink>
       <Flex gap={4} py={5}>
         <Input

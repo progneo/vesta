@@ -176,7 +176,7 @@ function ClientRegisterPage() {
 
         const document = await createDocument(newDocument)
         carerSecondData.documentId = document.id
-        
+
         const responsible = await createResponsible(carerSecondData)
         await createResponsibleOfClient(responsible.id, client.id)
       }
@@ -263,14 +263,14 @@ function ClientRegisterPage() {
                     <Stack direction="row">
                       <Radio
                         {...register('sex')}
-                        colorScheme={'teal'}
+                        colorScheme={'accentGreen'}
                         value="М"
                       >
                         М
                       </Radio>
                       <Radio
                         {...register('sex')}
-                        colorScheme={'teal'}
+                        colorScheme={'accentGreen'}
                         value="Ж"
                       >
                         Ж
@@ -320,28 +320,28 @@ function ClientRegisterPage() {
               </FormControl>
               <HStack gap={5}>
                 <Checkbox
-                  colorScheme={'teal'}
+                  colorScheme={'accentGreen'}
                   isChecked={hasMother}
                   onChange={e => setMotherState(e.target.checked)}
                 >
                   Мать
                 </Checkbox>
                 <Checkbox
-                  colorScheme={'teal'}
+                  colorScheme={'accentGreen'}
                   isChecked={hasFather}
                   onChange={e => setFatherState(e.target.checked)}
                 >
                   Отец
                 </Checkbox>
                 <Checkbox
-                  colorScheme={'teal'}
+                  colorScheme={'accentGreen'}
                   isChecked={hasCarerFirst}
                   onChange={e => setCarerFirstState(e.target.checked)}
                 >
                   Опекун
                 </Checkbox>
                 <Checkbox
-                  colorScheme={'teal'}
+                  colorScheme={'accentGreen'}
                   isChecked={hasCarerSecond}
                   onChange={e => setCarerSecondState(e.target.checked)}
                 >
@@ -349,7 +349,7 @@ function ClientRegisterPage() {
                 </Checkbox>
               </HStack>
               <Button
-                colorScheme={'teal'}
+                colorScheme={'accentGreen'}
                 type="submit"
                 isLoading={isSubmitting}
                 isDisabled={canCreate}

@@ -170,7 +170,7 @@ function ResponsibleForm({
               </Button>
             )}
             {!isSaved && (
-              <Button colorScheme={'teal'} type="submit">
+              <Button colorScheme={'accentGreen'} type="submit">
                 Сохранить данные
               </Button>
             )}
